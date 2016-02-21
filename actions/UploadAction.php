@@ -17,9 +17,10 @@ class UploadAction extends Action {
 
     public $temp_path;
     public $uploadParam = 'file';
-    public $maxSize = 2097152;
-    public $extensions = 'jpeg, jpg, png, gif, zip, txt, doc';
-    public $multiple = false;
+    public $maxSize = 3145728;  //3MB
+    public $extensions = 'jpeg, JPEG, jpg, JPG, png, PNG, gif, GIF';
+    public $width = 200;
+    public $height = 200;
 
     /**
      * @inheritdoc
@@ -37,17 +38,7 @@ class UploadAction extends Action {
      * @inheritdoc
      */
     public function run() {
-        if (!$multiple) {
-            $this->uploadSingleFile();
-        } else {
-            $this->uploadMultipleFiles();
-        }
-    }
-
-    function uploadSingleFile() {
         if (Yii::$app->request->isPost) {
-
-
             $file = UploadedFile::getInstanceByName($this->uploadParam);
             $model = new DynamicModel(compact($this->uploadParam));
 
@@ -65,6 +56,14 @@ class UploadAction extends Action {
                 ];
             } else {
                 $model->{$this->uploadParam}->name = uniqid() . '.' . $model->{$this->uploadParam}->extension;
+                $request = Yii::$app->request;
+
+                $image = Image::crop(
+                                $file->tempName . $request->post('filename'), intval($request->post('w')), intval($request->post('h')), [$request->post('x'), $request->post('y')]
+                        )->resize(
+                        new Box($this->width, $this->height)
+                );
+
                 if ($image->save($this->temp_path . $model->{$this->uploadParam}->name)) {
                     $result = [
                         'filelink' => $model->{$this->uploadParam}->name,
@@ -81,10 +80,6 @@ class UploadAction extends Action {
         } else {
             throw new BadRequestHttpException(Yii::t('cropper', 'ONLY_POST_REQUEST'));
         }
-    }
-
-    function uploadMultipleFiles() {
-        $files = UploadedFile::getInstancesByName($this->uploadParam);
     }
 
 }
