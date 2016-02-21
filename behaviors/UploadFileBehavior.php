@@ -1,6 +1,6 @@
 <?php
 
-namespace plathir\cropper\behaviors;
+namespace plathir\upload\behaviors;
 
 use yii\db\ActiveRecord;
 use yii\base\Behavior;

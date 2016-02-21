@@ -1,6 +1,6 @@
 <?php
 
-namespace plathir\cropper\actions;
+namespace plathir\upload\actions;
 
 use yii\base\Action;
 use yii\base\DynamicModel;
