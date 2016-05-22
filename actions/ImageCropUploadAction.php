@@ -8,12 +8,12 @@ use yii\base\InvalidConfigException;
 use yii\web\BadRequestHttpException;
 use yii\web\Response;
 use yii\web\UploadedFile;
-use plathir\cropper\Widget;
+use plathir\upload\Widget;
 use yii\imagine\Image;
 use Imagine\Image\Box;
 use Yii;
 
-class UploadAction extends Action {
+class ImageCropUploadAction extends Action {
 
     public $temp_path;
     public $uploadParam = 'file';
@@ -28,7 +28,7 @@ class UploadAction extends Action {
     public function init() {
         Widget::registerTranslations();
         if ($this->temp_path === null) {
-            throw new InvalidConfigException(Yii::t('cropper', 'MISSING_ATTRIBUTE', ['attribute' => 'temp_path']));
+            throw new InvalidConfigException(Yii::t('upload', 'MISSING_ATTRIBUTE', ['attribute' => 'temp_path']));
         } else {
             $this->temp_path = rtrim(Yii::getAlias($this->temp_path), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
         }
@@ -44,10 +44,10 @@ class UploadAction extends Action {
 
             $model->addRule($this->uploadParam, 'file', [
                 'maxSize' => $this->maxSize,
-                'tooBig' => Yii::t('cropper', 'TOO_BIG_ERROR', ['size' => $this->maxSize / (1024 * 1024)]),
+                'tooBig' => Yii::t('upload', 'TOO_BIG_ERROR', ['size' => $this->maxSize / (1024 * 1024)]),
                 'extensions' => explode(', ', $this->extensions),
                 'checkExtensionByMimeType' => false,
-                'wrongExtension' => Yii::t('cropper', 'EXTENSION_ERROR', ['formats' => $this->extensions])
+                'wrongExtension' => Yii::t('upload', 'EXTENSION_ERROR', ['formats' => $this->extensions])
             ])->validate();
 
             if ($model->hasErrors()) {
@@ -70,7 +70,7 @@ class UploadAction extends Action {
                     ];
                 } else {
                     $result = [
-                        'error' => Yii::t('cropper', 'ERROR_CAN_NOT_UPLOAD_FILE')]
+                        'error' => Yii::t('upload', 'ERROR_CAN_NOT_UPLOAD_FILE')]
                     ;
                 }
             }
@@ -78,7 +78,7 @@ class UploadAction extends Action {
 
             return $result;
         } else {
-            throw new BadRequestHttpException(Yii::t('cropper', 'ONLY_POST_REQUEST'));
+            throw new BadRequestHttpException(Yii::t('upload', 'ONLY_POST_REQUEST'));
         }
     }
 

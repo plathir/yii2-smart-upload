@@ -18,13 +18,9 @@
  */
 return [
     'DEFAULT_LABEL' => 'For download the new photos, click here or drag a file here',
-    'CROP_PHOTO' => 'Crop photo',
-    'DELETE_PHOTO' => 'Delete photo',
-    'EDIT_PHOTO' => 'Edit photo',
     'ERROR_CAN_NOT_UPLOAD_FILE' => 'Can`t upload file',
     'MISSING_ATTRIBUTE' => 'Attibute "{attribute}" must be specified',
     'ONLY_POST_REQUEST' => 'Allowed only POST-request',
-    'UPLOAD_ANOTHER_PHOTO' => 'Upload another photo',
     'TOO_BIG_ERROR' => 'Exceeded the allowable size of the file ({size} Mb)',
     'EXTENSION_ERROR' => 'Enable only the following file formats: {formats}'
 ];
