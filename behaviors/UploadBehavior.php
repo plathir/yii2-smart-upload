@@ -122,7 +122,7 @@ class UploadBehavior extends Behavior {
 
     protected function deletePath($path) {
         if (is_dir($path)) {
-            if (count(glob($path. DIRECTORY_SEPARATOR."*")) === 0 ) {
+            if (count(glob($path . DIRECTORY_SEPARATOR . "*")) === 0) {
                 return rmdir($path);
             }
             return true;
@@ -253,6 +253,7 @@ class UploadBehavior extends Behavior {
      */
 
     public function beforeDelete() {
+
         if ($this->unlinkOnDelete) {
             foreach ($this->attributes as $attribute => $config) {
                 if ($this->owner->$attribute) {

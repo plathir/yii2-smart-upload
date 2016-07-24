@@ -1,51 +1,49 @@
 .upload_box {
     min-height: 140px;
+    padding-top: 10px;
+    padding-bottom: 10px;
 
 }
 .upl_thumbnail {
-    border: dashed 2px #A9A9A9;
-    box-sizing: content-box;
-    margin: 20px 0px;
     text-align: center;
     vertical-align: middle;    
-    height: 100%;
-}
-.upl_thumbnail .uploader_label {
-    cursor: pointer;
-    padding: 10px;
-    display: table;
+    display: inline;
     height: 100%;
     width: 100%;
+    /*padding: 10px 10px 10px 10px;*/
 
 }
-
 .uploader_label {
-    min-height: 140px;
-}
-
-.upl_thumbnail .uploader_label span {
-    display: table-cell;
+    border: dashed 2px #A9A9A9;
+    box-sizing: content-box;    
     vertical-align: middle;
+    align-content:  flex-start;
+    cursor: pointer;
+    display:  inline-block;
     height: 100%;
     width: 100%;
+    min-height: 140px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+
 }
 
-.upl_thumbnail {
-    overflow-y: auto;    
+.spanDiv {
+    padding : 50px;
 }
 
-.image_preview img {
+
+.image_preview img {    
     max-height: 100px;
+    padding: 10px;
     overflow-y: auto;  
 
 }
+.upload_buttons {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
 
-.bs-example{
-    margin: 100px 75px 0;
+.imgBox {
+  min-height: 120px;  
 }
-.bs-example button{
-    margin: 10px;
-}
-.media-object {
-    max-height: 200px;
-}   

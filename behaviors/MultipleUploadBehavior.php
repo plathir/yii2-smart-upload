@@ -90,9 +90,11 @@ class MultipleUploadBehavior extends Behavior {
 
         if (empty($this->owner->$attribute)) {
             if ($insert !== true) {
-                foreach ($this->oldFiles($attribute) as $oldfile) {
-                    echo $oldfile;
-                    $this->deleteFile($this->file($attribute, $oldfile));
+                if ($this->oldFiles($attribute)) {
+                    foreach ($this->oldFiles($attribute) as $oldfile) {
+                        echo $oldfile;
+                        $this->deleteFile($this->file($attribute, $oldfile));
+                    }
                 }
             }
         } else {

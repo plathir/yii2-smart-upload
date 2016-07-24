@@ -197,8 +197,8 @@
             var oFReader = new FileReader();
             oFReader.readAsDataURL(file);
             oFReader.onload = function (oFREvent) {
-                var item = '<div class="col-sm-3 col-lg-3 col-md-3 col-xs-4" id="thumb_' + file.name + '" ><img class="img-thumbnail"  src = ' + oFREvent.target.result + ' >';
-                item += file.name + '</div>';
+                var item = '<div class="imgBox col-sm-4 col-lg-3 col-md-3 col-xs-6" id="thumb_' + file.name + '" ><img class="img-thumbnail"  src = ' + oFREvent.target.result + ' >';
+                item += '<br>' + file.name + '</div>';
                 $display.append(item);
             };
         }
@@ -211,8 +211,8 @@
             oFReader.readAsDataURL(file);
             oFReader.onload = function (oFREvent) {
                 console.log('in Preview File');
-                var item = '<div class="col-sm-2 col-lg-2 col-md-2 col-xs-4" id="' + file.name + '"  ><img class="img-thumbnail"  src = "' + options['noPhotoImage'] + '" >';
-                item += file.name + '</div>';
+                var item = '<div class="imgBox col-sm-4 col-lg-3 col-md-3 col-xs-6" id="' + file.name + '"  ><img class="img-thumbnail"  src = "' + options['noPhotoImage'] + '" >';
+                item += '<br>' + file.name + '</div>';
                 $display.append(item);
             };
         }

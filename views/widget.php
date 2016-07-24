@@ -20,7 +20,11 @@ use yii\helpers\Url;
                         <div class="image_preview">
 
                         </div>  
-                        <span>click here for Upload Files</span>
+                        <div class="spanDiv">
+                            <span>
+                                click here for Upload Files
+                            </span>
+                        </div>
 
                     </div>
 
@@ -78,9 +82,9 @@ use yii\helpers\Url;
                                 ?>
                                 <tr>
                                     <td class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
-                                        
-                                        <?= $widget->galleryType ? Html::img($widget->previewUrl.'/'.$file, ['style'=>'width:50px']) : '';?>
-                                        <?= Html::a($file, Url::to($widget->previewUrl . '/' . $file), ['class' => 'glyphicon glyphicon-paperclip',  'target' => "_blank", 'rel'=>'popover']); ?></td>
+
+                                        <?= $widget->galleryType ? Html::img($widget->previewUrl . '/' . $file, ['style' => 'width:50px']) : ''; ?>
+                                        <?= Html::a($file, Url::to($widget->previewUrl . '/' . $file), ['class' => 'glyphicon glyphicon-paperclip', 'target' => "_blank", 'rel' => 'popover']); ?></td>
                                     <td class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
                                         <span class="label label-success"><span class="glyphicon glyphicon-floppy-saved" aria-hidden="true"></span> Stored</span>
                                     </td>
