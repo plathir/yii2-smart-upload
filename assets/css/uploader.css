@@ -47,3 +47,7 @@
 .imgBox {
   min-height: 120px;  
 }
+
+.media-object {
+    max-height: 200px;
+} 
