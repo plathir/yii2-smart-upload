@@ -43,7 +43,8 @@ class FileUploadAction extends Action {
     public function run() {
         if (Yii::$app->request->isPost) {
             if (isset($_POST['filename'])) {
-                $this->fileName = uniqid() . '_' . $_POST['filename'];
+                //  $this->fileName = uniqid() . '_' . $_POST['filename'];
+                $this->fileName = pathinfo($_POST['filename'], PATHINFO_FILENAME) . '_' . uniqid() . '.' . pathinfo($_POST['filename'], PATHINFO_EXTENSION);
 
                 $upload_dir = $this->uploadDir;
                 $upload_file = $this->fileName;
