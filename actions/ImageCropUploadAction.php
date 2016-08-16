@@ -21,6 +21,9 @@ class ImageCropUploadAction extends Action {
     public $extensions = 'jpeg, JPEG, jpg, JPG, png, PNG, gif, GIF';
     public $width = 200;
     public $height = 200;
+    public $thumbnail = false;
+    public $thumbnail_width = 100;
+    public $thumbnail_height = 100;
 
     /**
      * @inheritdoc
@@ -65,6 +68,12 @@ class ImageCropUploadAction extends Action {
                 );
 
                 if ($image->save($this->temp_path . $model->{$this->uploadParam}->name)) {
+                    // create Thumbnail
+                    if (( $this->thumbnail ) && ( $this->thumbnail_width > 0 && $this->thumbnail_height > 0 )) {
+                        $image_thumb = Image::thumbnail($this->temp_path . $model->{$this->uploadParam}->name, $this->thumbnail_width, $this->thumbnail_height);
+                        $image_thumb->save($this->temp_path . '/thumbs/' . $model->{$this->uploadParam}->name);
+                    }
+
                     $result = [
                         'filelink' => $model->{$this->uploadParam}->name,
                     ];

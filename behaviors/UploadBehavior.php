@@ -89,18 +89,32 @@ class UploadBehavior extends Behavior {
         if (empty($this->owner->$attribute)) {
             if ($insert !== true) {
                 $this->deleteFile($this->oldFile($attribute));
+                $this->deleteFile($this->oldThumbFile($attribute));
             }
         } else {
             $tempFile = $this->tempFile($attribute);
+            $tempThumbFile = $this->tempThumbFile($attribute);
             $file = $this->file($attribute);
+            $fileThumb = $this->fileThumb($attribute);
+//            echo $tempThumbFile;
+//            echo $fileThumb;
+//            die();
+
             if (is_file($tempFile) && FileHelper::createDirectory($this->path($attribute))) {
                 if (rename($tempFile, $file)) {
+                    if (is_file($tempThumbFile) && FileHelper::createDirectory($this->pathThumbs($attribute))) {
+                        rename($tempThumbFile, $fileThumb);
+                    }
+
                     if ($insert === false && $this->unlinkOnSave === true && $this->owner->getOldAttribute(
                                     $attribute
                             )
                     ) {
                         $this->deleteFile($this->oldFile($attribute));
+                        $this->deleteFile($this->oldThumbFile($attribute));
                     }
+
+
                     $this->triggerEventAfterUpload();
                 } else {
                     unset($this->owner->$attribute);
@@ -139,6 +153,10 @@ class UploadBehavior extends Behavior {
         return $this->path($attribute) . $this->owner->getOldAttribute($attribute);
     }
 
+    public function oldThumbFile($attribute) {
+        return $this->pathThumbs($attribute) . $this->owner->getOldAttribute($attribute);
+    }
+
     /**
      * @param string $attribute Attribute name
      *
@@ -152,12 +170,28 @@ class UploadBehavior extends Behavior {
         }
     }
 
+    public function pathThumbs($attribute) {
+        if ($this->folderID($attribute) == null) {
+            return FileHelper::normalizePath($this->attributes[$attribute]['path']) . DIRECTORY_SEPARATOR . 'thumbs' . DIRECTORY_SEPARATOR;
+        } else {
+            return FileHelper::normalizePath($this->attributes[$attribute]['path'] . $this->folderID($attribute)) . DIRECTORY_SEPARATOR . 'thumbs' . DIRECTORY_SEPARATOR;
+        }
+    }
+
     public function tempFile($attribute) {
         return $this->tempPath($attribute) . $this->owner->$attribute;
     }
 
+    public function tempThumbFile($attribute) {
+        return $this->tempThumbPath($attribute) . $this->owner->$attribute;
+    }
+
     public function tempPath($attribute) {
         return $this->attributes[$attribute]['temp_path'];
+    }
+
+    public function tempThumbPath($attribute) {
+        return $this->attributes[$attribute]['temp_path'] . 'thumbs' . DIRECTORY_SEPARATOR;
     }
 
     public function folderID($attribute) {
@@ -181,6 +215,10 @@ class UploadBehavior extends Behavior {
         return $this->path($attribute) . $this->owner->$attribute;
     }
 
+    public function fileThumb($attribute) {
+        return $this->pathThumbs($attribute) . $this->owner->$attribute;
+    }
+
     public function publish($path) {
         if (!isset(static::$_cachePublishPath[$path])) {
             static::$_cachePublishPath[$path] = Yii::$app->assetManager->publish($path)[1];
@@ -198,6 +236,7 @@ class UploadBehavior extends Behavior {
     public function removeAttribute($attribute) {
         if (isset($this->attributes[$attribute])) {
             if ($this->deleteFile($this->file($attribute))) {
+                $this->deleteFile($this->fileThumb($attribute));
                 return $this->owner->updateAttributes([$attribute => null]);
             }
         }
@@ -258,12 +297,14 @@ class UploadBehavior extends Behavior {
             foreach ($this->attributes as $attribute => $config) {
                 if ($this->owner->$attribute) {
                     $this->deleteFile($this->file($attribute));
+                    $this->deleteFile($this->fileThumb($attribute));
                 }
             }
 
             foreach ($this->attributes as $attribute => $config) {
                 if ($this->owner->$attribute) {
                     if (!$this->folderID($attribute) == null) {
+                        $this->deletePath($this->pathThumbs($attribute));
                         $this->deletePath($this->path($attribute));
                     }
                 }
