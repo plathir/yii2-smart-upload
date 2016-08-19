@@ -24,6 +24,8 @@ class ImageCropUploadAction extends Action {
     public $thumbnail = false;
     public $thumbnail_width = 100;
     public $thumbnail_height = 100;
+    public $thumbnail_mode = 'outbound';
+    public $watermark = '';
 
     /**
      * @inheritdoc
@@ -66,6 +68,16 @@ class ImageCropUploadAction extends Action {
                         )->resize(
                         new Box($this->width, $this->height)
                 );
+
+                // watermark
+//                if ($this->watermark != '') {
+//                    $watermark = Image::getImagine();
+//                    $watermark->open($this->watermark);
+//                    $size = $image->getSize();
+//                    $wSize = $watermark->getSize();
+//                    $bottomRight = new Imagine\Image\Point($size->getWidth() - $wSize->getWidth(), $size->getHeight() - $wSize->getHeight());
+//                    $image->paste($watermark, $bottomRight);
+//                }
 
                 if ($image->save($this->temp_path . $model->{$this->uploadParam}->name)) {
                     // create Thumbnail
