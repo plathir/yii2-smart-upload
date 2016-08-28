@@ -94,6 +94,7 @@ class MultipleUploadBehavior extends Behavior {
                     foreach ($this->oldFiles($attribute) as $oldfile) {
                         echo $oldfile;
                         $this->deleteFile($this->file($attribute, $oldfile));
+                        $this->deleteFile($this->fileThumb($attribute, $oldfile));
                     }
                 }
             }
@@ -115,10 +116,6 @@ class MultipleUploadBehavior extends Behavior {
             } else {
                 $moveFiles = $newFiles;
             }
-            echo 'In SaveFile';
-            print_r($moveFiles);
-            echo $this->path($attribute);
-
 
             $filesMoved = true;
             if ($moveFiles) {
@@ -128,8 +125,17 @@ class MultipleUploadBehavior extends Behavior {
                     $tempFile = $this->tempFile($attribute, $filename);
                     $file = $this->file($attribute, $filename);
 
+                    $tempFile_thumb = $this->tempThumbFile($attribute, $filename);
+                    $file_thumb = $this->fileThumb($attribute, $filename);
+
                     if (is_file($tempFile) && FileHelper::createDirectory($this->path($attribute))) {
                         if (rename($tempFile, $file) === false) {
+                            $filesMoved = false;
+                        }
+                    }
+
+                    if (is_file($tempFile_thumb) && FileHelper::createDirectory($this->pathThumbs($attribute))) {
+                        if (rename($tempFile_thumb, $file_thumb) === false) {
                             $filesMoved = false;
                         }
                     }
@@ -145,6 +151,7 @@ class MultipleUploadBehavior extends Behavior {
                 if ($delFiles) {
                     foreach ($delFiles as $oldfile) {
                         $this->deleteFile($this->file($attribute, $oldfile));
+                        $this->deleteFile($this->fileThumb($attribute, $oldfile));
                     }
                 }
             } else {
@@ -221,6 +228,10 @@ class MultipleUploadBehavior extends Behavior {
         return $this->path($attribute) . $this->owner->getOldAttribute($attribute);
     }
 
+    public function oldThumbFile($attribute) {
+        return $this->pathThumbs($attribute) . $this->owner->getOldAttribute($attribute);
+    }
+
     public function oldFiles($attribute) {
         return json_decode($this->owner->getOldAttribute($attribute));
     }
@@ -238,12 +249,28 @@ class MultipleUploadBehavior extends Behavior {
         }
     }
 
+    public function pathThumbs($attribute) {
+        if ($this->folderID($attribute) == null) {
+            return FileHelper::normalizePath($this->attributes[$attribute]['path']) . DIRECTORY_SEPARATOR . 'thumbs' . DIRECTORY_SEPARATOR;
+        } else {
+            return FileHelper::normalizePath($this->attributes[$attribute]['path'] . $this->folderID($attribute)) . DIRECTORY_SEPARATOR . 'thumbs' . DIRECTORY_SEPARATOR;
+        }
+    }
+
     public function tempFile($attribute, $filename) {
         return $this->tempPath($attribute) . $filename;
     }
 
+    public function tempThumbFile($attribute, $filename) {
+        return $this->tempThumbPath($attribute) . $filename;
+    }
+
     public function tempPath($attribute) {
         return $this->attributes[$attribute]['temp_path'];
+    }
+
+    public function tempThumbPath($attribute) {
+        return $this->attributes[$attribute]['temp_path'] . 'thumbs' . DIRECTORY_SEPARATOR;
     }
 
     public function folderID($attribute) {
@@ -267,6 +294,10 @@ class MultipleUploadBehavior extends Behavior {
         return $this->path($attribute) . $filename;
     }
 
+    public function fileThumb($attribute, $filename) {
+        return $this->pathThumbs($attribute) . $filename;
+    }
+
     public function publish($path) {
         if (!isset(static::$_cachePublishPath[$path])) {
             static::$_cachePublishPath[$path] = Yii::$app->assetManager->publish($path)[1];
@@ -285,6 +316,7 @@ class MultipleUploadBehavior extends Behavior {
         if (isset($this->attributes[$attribute])) {
             foreach ($this->oldFiles($attribute) as $filename) {
                 $this->deleteFile($this->file($attribute), $filename);
+                $this->deleteFile($this->fileThumb($attribute), $filename);
             }
             return $this->owner->updateAttributes([$attribute => null]);
         }

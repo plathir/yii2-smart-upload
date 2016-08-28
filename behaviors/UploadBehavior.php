@@ -96,9 +96,6 @@ class UploadBehavior extends Behavior {
             $tempThumbFile = $this->tempThumbFile($attribute);
             $file = $this->file($attribute);
             $fileThumb = $this->fileThumb($attribute);
-//            echo $tempThumbFile;
-//            echo $fileThumb;
-//            die();
 
             if (is_file($tempFile) && FileHelper::createDirectory($this->path($attribute))) {
                 if (rename($tempFile, $file)) {

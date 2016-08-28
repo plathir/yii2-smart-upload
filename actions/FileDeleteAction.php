@@ -27,14 +27,15 @@ class FileDeleteAction extends Action {
     public function run() {
         if (Yii::$app->request->isPost) {
             if (isset($_POST['filename'])) {
-                if (unlink($this->uploadDir .$_POST['filename'])) {
-                   $upload_result = json_encode(array('success' => false, 'msg' => 'deleted'));
+                if (unlink($this->uploadDir . $_POST['filename'])) {
+                    unlink($this->uploadDir . 'thumbs' . DIRECTORY_SEPARATOR . $_POST['filename']);
+                    $upload_result = json_encode(array('success' => true, 'msg' => 'deleted'));
                 } else {
-                 $upload_result = json_encode(array('success' => false, 'msg' => 'cannot delete'));
+                    $upload_result = json_encode(array('success' => false, 'msg' => 'cannot delete'));
                 }
-                
-              Yii::$app->response->format = Response::FORMAT_JSON;
-              return $upload_result;
+
+                Yii::$app->response->format = Response::FORMAT_JSON;
+                return $upload_result;
             }
         } else {
             throw new BadRequestHttpException(Yii::t('upload', 'ONLY_POST_REQUEST'));

@@ -12,7 +12,7 @@ use yii\helpers\Url;
         <div class="panel-body">
 
 
-            <?= Html::activeHiddenInput($model, $widget->attribute, ['class' => 'attachments']); ?>    
+            <?= Html::activeHiddenInput($model, $widget->attribute, ['class' => 'attachments', 'charset' => 'utf-8']); ?>    
 
             <div class="upload_box">
                 <div class="upl_thumbnail"  id ="dragbox">
