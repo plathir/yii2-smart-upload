@@ -22,8 +22,8 @@ class ImageCropUploadAction extends Action {
     public $width = 200;
     public $height = 200;
     public $thumbnail = false;
-    public $thumbnail_width = 100;
-    public $thumbnail_height = 100;
+    public $thumbnail_width = 200;
+    public $thumbnail_height = 200;
     public $thumbnail_mode = 'outbound';
     public $watermark = '';
 
@@ -70,14 +70,15 @@ class ImageCropUploadAction extends Action {
                 );
 
                 // watermark
-//                if ($this->watermark != '') {
-//                    $watermark = Image::getImagine();
-//                    $watermark->open($this->watermark);
-//                    $size = $image->getSize();
-//                    $wSize = $watermark->getSize();
-//                    $bottomRight = new Imagine\Image\Point($size->getWidth() - $wSize->getWidth(), $size->getHeight() - $wSize->getHeight());
-//                    $image->paste($watermark, $bottomRight);
-//                }
+                if ($this->watermark != '') {
+                    $imagine = Image::getImagine();
+                    $watermark = $imagine->open($this->watermark);
+                    $size = $image->getSize();
+                    $wSize = $watermark->getSize();
+
+                    $bottomRight = new \Imagine\Image\Point($size->getWidth() - $wSize->getWidth(), $size->getHeight() - $wSize->getHeight());
+                    $image->paste($watermark, $bottomRight);
+                }
 
                 if ($image->save($this->temp_path . $model->{$this->uploadParam}->name)) {
                     // create Thumbnail
