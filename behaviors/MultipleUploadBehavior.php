@@ -379,6 +379,7 @@ class MultipleUploadBehavior extends Behavior {
                 if ($this->owner->$attribute) {
                     foreach ($this->oldFiles($attribute) as $filename) {
                         $this->deleteFile($this->file($attribute, $filename));
+                        $this->deleteFile($this->fileThumb($attribute, $filename));
                     }
                 }
             }
@@ -386,6 +387,7 @@ class MultipleUploadBehavior extends Behavior {
             foreach ($this->attributes as $attribute => $config) {
                 if ($this->owner->$attribute) {
                     if (!$this->folderID($attribute) == null) {
+                        $this->deletePath($this->pathThumbs($attribute));
                         $this->deletePath($this->path($attribute));
                     }
                 }

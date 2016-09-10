@@ -10,7 +10,7 @@ use plathir\upload\Widget;
 use Yii;
 use plathir\upload\lib\FileUpload;
 use yii\imagine\Image;
-use Imagine\Image\Box;
+use Imagine\Image\ManipulatorInterface;
 
 class FileUploadAction extends Action {
 
@@ -30,10 +30,9 @@ class FileUploadAction extends Action {
     public $thumbnail_height = 100;
     public $thumbnail_mode = 'outbound';
     public $watermark = '';
-    public $memory_limit = '256M';
     public $resize_max_width = 800;
     public $resize_max_height = 800;
-
+    
     /**
      * @inheritdoc
      */
@@ -70,63 +69,36 @@ class FileUploadAction extends Action {
                     $upload_result = json_encode(array('success' => false, 'msg' => $uploader->getErrorMsg()));
                 } else {
 
-                    // apply watermark
-                    if ( $this->isImage($upload_dir . $upload_file)) {
-
-
-                        ini_set('memory_limit', $this->memory_limit);
+                    if ($this->isImage($upload_dir . $upload_file)) {
+                        //
                         $image_name = $upload_dir . $upload_file;
 
-
                         // resize with calculate aspect ratio
+                        list($image_width, $image_height, $type, $attr) = getimagesize($image_name);
 
-                        $imagine_org = Image::getImagine();
-                        $image = $imagine_org->open($image_name);
-                        $size = $image->getSize();
+                        $ratio = $image_width / $image_height;
 
-                        if ($size->getWidth() > $this->resize_max_width || $size->getHeight() > $this->resize_max_height) {
-                            $ratio = $size->getWidth() / $size->getHeight();
-                            $new_name = $upload_dir . uniqid() . '.jpg';
-
-                            if ($ratio > 1) {
-                                $target_width = $this->resize_max_width;
-                                $target_height = $this->resize_max_width / $ratio;
-                            } else {
-                                $target_width = $this->resize_max_height * $ratio;
-                                $target_height = $this->resize_max_height;
-                            }
-                            $image->resize(new Box($target_width, $target_height));
-                            $size = $image->getSize();
-                            
-                            if ($this->watermark) {
-                                $imagine = Image::getImagine();
-                                $watermark = $imagine->open($this->watermark);
-                                $wSize = $watermark->getSize();
-                                $bottomRight = new \Imagine\Image\Point($size->getWidth() - $wSize->getWidth(), $size->getHeight() - $wSize->getHeight());
-                                $image->paste($watermark, $bottomRight);
-                            }
-
-                            $image->save($new_name);
-                            unlink($image_name);
-                            rename($new_name, $image_name);
+                        if ($ratio > 1) {
+                            $target_width = $this->resize_max_width;
+                            $target_height = $this->resize_max_width / $ratio;
                         } else {
-                            if ($this->watermark) {
-                                $imagine = Image::getImagine();
-                                $watermark = $imagine->open($this->watermark);
-                                $size = $image->getSize();
-                                $wSize = $watermark->getSize();
-                                $bottomRight = new \Imagine\Image\Point($size->getWidth() - $wSize->getWidth(), $size->getHeight() - $wSize->getHeight());
-                                $image->paste($watermark, $bottomRight);
-                                $image->save($new_name);
-                                unlink($image_name);
-                                rename($new_name, $image_name);
-                            }
+                            $target_width = $this->resize_max_height * $ratio;
+                            $target_height = $this->resize_max_height;
+                        }
+                        // resize image if original dimension is bigger from max size
+                        if ($target_width < $this->resize_max_width || $target_height < $this->resize_max_height) {
+                            Image::thumbnail($image_name, $target_width, $target_height, ManipulatorInterface::THUMBNAIL_INSET)
+                                    ->save($image_name);
+                        }
+                        // apply watermark 
+                        if ($this->watermark) {
+                            Image::watermark($image_name, $this->watermark)->save($image_name);
                         }
                     }
                     // thumbnails create
-                    if (( $this->thumbnail ) && $this->isImage($upload_dir . $upload_file) && ( $this->thumbnail_width > 0 && $this->thumbnail_height > 0 )) {
-                        $image_thumb = Image::thumbnail($upload_dir . $upload_file, $this->thumbnail_width, $this->thumbnail_height);
-                        $image_thumb->save($upload_dir . 'thumbs/' . $upload_file);
+                    if (( $this->thumbnail ) && $this->isImage($image_name) && ( $this->thumbnail_width > 0 && $this->thumbnail_height > 0 )) {
+                        Image::thumbnail($image_name, $this->thumbnail_width, $this->thumbnail_height)
+                                ->save($upload_dir . 'thumbs/' . $upload_file);
                     }
 
                     $upload_result = [

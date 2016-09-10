@@ -62,29 +62,21 @@ class ImageCropUploadAction extends Action {
             } else {
                 $model->{$this->uploadParam}->name = uniqid() . '.' . $model->{$this->uploadParam}->extension;
                 $request = Yii::$app->request;
-
-                $image = Image::crop(
-                                $file->tempName . $request->post('filename'), intval($request->post('w')), intval($request->post('h')), [$request->post('x'), $request->post('y')]
-                        )->resize(
-                        new Box($this->width, $this->height)
-                );
+                $image_name = $this->temp_path . $model->{$this->uploadParam}->name;
+                $image = Image::crop($file->tempName . $request->post('filename'), intval($request->post('w')), intval($request->post('h')), [$request->post('x'), $request->post('y')])
+                        ->resize(new Box($this->width, $this->height))
+                        ->save($image_name);
 
                 // watermark
                 if ($this->watermark != '') {
-                    $imagine = Image::getImagine();
-                    $watermark = $imagine->open($this->watermark);
-                    $size = $image->getSize();
-                    $wSize = $watermark->getSize();
-
-                    $bottomRight = new \Imagine\Image\Point($size->getWidth() - $wSize->getWidth(), $size->getHeight() - $wSize->getHeight());
-                    $image->paste($watermark, $bottomRight);
+                    $image = Image::watermark($image_name, $this->watermark)->save($image_name);
                 }
 
-                if ($image->save($this->temp_path . $model->{$this->uploadParam}->name)) {
+                if ($image->save($image_name)) {
                     // create Thumbnail
                     if (( $this->thumbnail ) && ( $this->thumbnail_width > 0 && $this->thumbnail_height > 0 )) {
-                        $image_thumb = Image::thumbnail($this->temp_path . $model->{$this->uploadParam}->name, $this->thumbnail_width, $this->thumbnail_height);
-                        $image_thumb->save($this->temp_path . '/thumbs/' . $model->{$this->uploadParam}->name);
+                        Image::thumbnail($this->temp_path . $model->{$this->uploadParam}->name, $this->thumbnail_width, $this->thumbnail_height)
+                                ->save($this->temp_path . '/thumbs/' . $model->{$this->uploadParam}->name);
                     }
 
                     $result = [
