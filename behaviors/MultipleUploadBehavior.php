@@ -86,7 +86,8 @@ class MultipleUploadBehavior extends Behavior {
     }
 
     protected function saveFile($attribute, $insert = true) {
-
+        $newFiles = [];
+        $oldFiles = [];
 
         if (empty($this->owner->$attribute)) {
             if ($insert !== true) {
@@ -102,7 +103,7 @@ class MultipleUploadBehavior extends Behavior {
 
 
             $newFiles = json_decode($this->owner->$attribute);
-            $oldFiles = $this->oldFiles($attribute);
+            $oldFiles[] = $this->oldFiles($attribute);
 
             $delFiles = [];
             $moveFiles = [];
@@ -167,7 +168,7 @@ class MultipleUploadBehavior extends Behavior {
      * @return type
      */
     protected function getDelFiles($oldFiles, $newFiles) {
-        $delFiles = '';
+        $delFiles = [];
         foreach ($oldFiles as &$value) {
             if (array_search($value, $newFiles) === false) {
                 $delFiles[] = $value;
@@ -183,7 +184,7 @@ class MultipleUploadBehavior extends Behavior {
      * @return type
      */
     protected function getMoveFiles($oldFiles, $newFiles) {
-        $moveFiles = '';
+        $moveFiles = [];
         foreach ($newFiles as &$value) {
             if (array_search($value, $oldFiles) === false) {
                 $moveFiles[] = $value;
