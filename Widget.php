@@ -88,7 +88,7 @@ class Widget extends InputWidget {
             'galleryType' => $this->galleryType,
             
         ];
-
+ 
         $view->registerJs(
                 'jQuery("#' . $this->options['id'] . '").siblings(".upload_box").uploader(' . Json::encode($settings) . ');', $view::POS_READY
         );

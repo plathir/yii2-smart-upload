@@ -46,7 +46,6 @@ class ImageCropUploadAction extends Action {
         if (Yii::$app->request->isPost) {
             $file = UploadedFile::getInstanceByName($this->uploadParam);
             $model = new DynamicModel(compact($this->uploadParam));
-
             $model->addRule($this->uploadParam, 'file', [
                 'maxSize' => $this->maxSize,
                 'tooBig' => Yii::t('upload', 'TOO_BIG_ERROR', ['size' => $this->maxSize / (1024 * 1024)]),
