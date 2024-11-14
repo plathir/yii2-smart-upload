@@ -93,7 +93,7 @@ class MultipleUploadBehavior extends Behavior {
             if ($insert !== true) {
                 if ($this->oldFiles($attribute)) {
                     foreach ($this->oldFiles($attribute) as $oldfile) {
-                        echo $oldfile;
+//                        echo $oldfile;
                         $this->deleteFile($this->file($attribute, $oldfile));
                         $this->deleteFile($this->fileThumb($attribute, $oldfile));
                     }
@@ -349,7 +349,7 @@ class MultipleUploadBehavior extends Behavior {
      * 
      */
     public function afterInsert() {
-        echo 'afterInsert :';
+//        echo 'afterInsert :';
 
         foreach ($this->attributes as $attribute => $config) {
             if ($this->owner->$attribute) {
